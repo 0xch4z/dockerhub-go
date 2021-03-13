@@ -25,7 +25,7 @@ type User struct {
 }
 
 func (s *UserService) GetLoggedInUser(ctx context.Context) (*User, error) {
-	url := "/user"
+	url := "/user/"
 
 	req, err := s.client.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
