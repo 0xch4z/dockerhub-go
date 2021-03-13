@@ -109,6 +109,44 @@ func TestRepositoriesService_SetRepositoryPrivacy(t *testing.T) {
 	}
 }
 
+func TestRepositoriesService_CreateRepository(t *testing.T) {
+	client, mux, teardown := makeMockClient()
+	defer teardown()
+
+	namespace := "namespace"
+	registry := "docker"
+	name := "name"
+	description := "description"
+	privacy := "public"
+	isPrivate := false
+	list := &Repository{}
+	mux.HandleFunc("/repositories/", func(w http.ResponseWriter, r *http.Request) {
+		assertMethod(t, r, http.MethodPost)
+		assertNoHeader(t, r, "Authorization")
+		assertBody(t, r, string(mustJSONMarshal(&CreateRepositoryRequest{
+			Namespace:   namespace,
+			Registry:    registry,
+			Image:       fmt.Sprintf("%s/%s", namespace, name),
+			Name:        name,
+			Description: description,
+			Privacy:     privacy,
+			IsPrivate:   isPrivate,
+		})))
+		w.WriteHeader(http.StatusCreated)
+		w.Write(mustJSONMarshal(&Repository{}))
+	})
+
+	res, err := client.Repositories.CreateRepository(context.Background(), namespace, name, description, isPrivate)
+
+	if err != nil {
+		t.Errorf("Repositories.CreateRepository returned error: %v", err)
+	}
+
+	if !reflect.DeepEqual(res, list) {
+		t.Errorf("repository list is %v; want %v", res, list)
+	}
+}
+
 func TestRepositoriesService_GetRepositories(t *testing.T) {
 	client, mux, teardown := makeMockClient()
 	defer teardown()
