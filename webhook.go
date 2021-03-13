@@ -62,3 +62,19 @@ func (s *WebhookService) CreateWebhook(ctx context.Context, namespace, repo, nam
 	}
 	return res, nil
 }
+
+func (s *WebhookService) GetWebhooks(ctx context.Context, namespace, repo string) (*Webhook, error) {
+	slug := s.buildWebhookSlug(namespace, repo)
+
+	req, err := s.client.NewRequest(http.MethodGet, slug, nil)
+
+	if err != nil {
+		return nil, err
+	}
+	res := &Webhook{}
+
+	if _, err := s.client.Do(ctx, req, res); err != nil {
+		return nil, err
+	}
+	return res, nil
+}
