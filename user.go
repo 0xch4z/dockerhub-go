@@ -2,7 +2,6 @@ package dockerhub
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 )
@@ -29,7 +28,7 @@ func (s *UserService) GetLoggedInUser(ctx context.Context) (*User, error) {
 
 	req, err := s.client.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		fmt.Println("err", err)
+		return nil, err
 	}
 
 	res := &User{}
