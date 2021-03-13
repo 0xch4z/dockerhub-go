@@ -61,8 +61,50 @@ type Repository struct {
 	Permissions RepositoryPermissions `json:"repository_permissions"`
 }
 
+type CreateRepositoryRequest struct {
+	Namespace     string        `json:"namespace"`
+	Registry      string        `json:"registry"`
+	Image         string        `json:"image"`
+	Name          string        `json:"name"`
+	Description   string        `json:"description"`
+	Privacy       string        `json:"privacy"`
+	BuildSettings []interface{} `json:"build_settings"`
+	IsPrivate     bool          `json:"is_private"`
+}
+
 func (s RepositoriesService) buildRepoSlug(namespace, repo string) string {
 	return fmt.Sprintf("/repositories/%s/%s/", namespace, repo)
+}
+
+func (s *RepositoriesService) CreateRepository(ctx context.Context, namespace, name, description string, isPrivate bool) (*Repository, error) {
+	url := "/repositories/"
+	repo := &CreateRepositoryRequest{
+		Namespace:   namespace,
+		Name:        name,
+		Description: description,
+		IsPrivate:   isPrivate,
+		Registry:    "docker",
+		Image:       fmt.Sprintf("%s/%s", namespace, name),
+	}
+
+	if repo.IsPrivate {
+		repo.Privacy = "private"
+	} else {
+		repo.Privacy = "public"
+	}
+
+	req, err := s.client.NewRequest(http.MethodPost, url, repo)
+
+	if err != nil {
+		return nil, err
+	}
+
+	res := &Repository{}
+
+	if _, err := s.client.Do(ctx, req, res); err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 // EditRepository updates a repository.
