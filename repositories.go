@@ -76,6 +76,7 @@ func (s RepositoriesService) buildRepoSlug(namespace, repo string) string {
 	return fmt.Sprintf("/repositories/%s/%s/", namespace, repo)
 }
 
+// CreateRepository create a repository.
 func (s *RepositoriesService) CreateRepository(ctx context.Context, namespace, name, description string, isPrivate bool) (*Repository, error) {
 	url := "/repositories/"
 	repo := &CreateRepositoryRequest{
