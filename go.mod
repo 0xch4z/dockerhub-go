@@ -1,3 +1,3 @@
-module github.com/ErKiran/hub-docker.git
+module github.com/ErKiran/hub-docker
 
 go 1.13
