@@ -1,3 +1,3 @@
-module github.com/ErKiran/docker-hub-api
+module github.com/charliekenney23/dockerhub-go
 
-go 1.13
+go 1.12
